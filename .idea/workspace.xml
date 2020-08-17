@@ -266,8 +266,9 @@
       <list>
         <option value="valueResourceFile" />
         <option value="Enum" />
-        <option value="Interface" />
+        <option value="layoutResourceFile_vertical" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -510,10 +511,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="477" y="88" key="#app/0.0.1536.824/1920.0.2048.1112@0.0.1536.824" timestamp="1597483091664" />
-    <state x="2675" y="311" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1597634117159">
+    <state x="2675" y="311" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1597646510425">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
-    <state x="2675" y="311" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597634117159" />
+    <state x="2675" y="311" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597646510425" />
     <state x="3102" y="401" width="730" height="300" key="#com.intellij.codeInsight.template.impl.EditVariableDialog" timestamp="1596525431729">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
@@ -522,10 +523,10 @@
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
     <state x="2672" y="359" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597632831555" />
-    <state x="2750" y="265" key="#com.intellij.ide.util.MemberChooser" timestamp="1597633799111">
+    <state x="2750" y="265" key="#com.intellij.ide.util.MemberChooser" timestamp="1597647132580">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
-    <state x="2750" y="265" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597633799111" />
+    <state x="2750" y="265" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597647132580" />
     <state x="2526" y="481" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1597030235209">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
@@ -543,10 +544,10 @@
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
     <state x="2675" y="303" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597136496061" />
-    <state x="2525" y="311" key="AndroidCreateResourceFileDialog" timestamp="1596103320922">
+    <state x="2525" y="311" key="AndroidCreateResourceFileDialog" timestamp="1597644406120">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
-    <state x="2525" y="311" key="AndroidCreateResourceFileDialog/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1596103320922" />
+    <state x="2525" y="311" key="AndroidCreateResourceFileDialog/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597644406120" />
     <state x="2798" y="369" key="AndroidCreateXmlResourceDialog" timestamp="1597135860752">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
@@ -601,20 +602,20 @@
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
     <state width="2005" height="376" key="GridCell.Tab.1.right/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597286632391" />
-    <state x="2759" y="490" key="ReplaceDuplicatesPrompt" timestamp="1597212862311">
+    <state x="2759" y="490" key="ReplaceDuplicatesPrompt" timestamp="1597647343598">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
-    <state x="2759" y="490" key="ReplaceDuplicatesPrompt/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597212862311" />
+    <state x="2759" y="490" key="ReplaceDuplicatesPrompt/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597647343598" />
     <state x="2887" y="194" key="SettingsEditor" timestamp="1597632965559">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
     <state x="259" y="109" key="SettingsEditor/0.0.1536.824/1920.0.2048.1112@0.0.1536.824" timestamp="1596700903228" />
     <state x="2887" y="194" key="SettingsEditor/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597632965559" />
-    <state width="498" height="456" key="SwitcherDM" timestamp="1597634112991">
+    <state width="498" height="456" key="SwitcherDM" timestamp="1597647384053">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
     <state width="498" height="398" key="SwitcherDM/0.0.1536.824/1920.0.2048.1112@0.0.1536.824" timestamp="1597476813571" />
-    <state width="498" height="456" key="SwitcherDM/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597634112991" />
+    <state width="498" height="456" key="SwitcherDM/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597647384053" />
     <state width="498" height="398" key="SwitcherDM/0.0.1536.824@0.0.1536.824" timestamp="1597315110903" />
     <state x="2725" y="333" key="chooseDestDirectoryDialog" timestamp="1596681601813">
       <screen x="1920" y="0" width="2048" height="1112" />
@@ -637,10 +638,10 @@
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
     <state x="2494" y="292" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597202273973" />
-    <state x="3103" y="293" width="538" height="501" key="extract.method.dialog" timestamp="1597212859805">
+    <state x="3103" y="293" width="538" height="501" key="extract.method.dialog" timestamp="1597647339415">
       <screen x="1920" y="0" width="2048" height="1112" />
     </state>
-    <state x="3103" y="293" width="538" height="501" key="extract.method.dialog/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597212859805" />
+    <state x="3103" y="293" width="538" height="501" key="extract.method.dialog/0.0.1536.824/1920.0.2048.1112@1920.0.2048.1112" timestamp="1597647339415" />
     <state x="527" y="215" width="642" height="532" key="find.popup" timestamp="1597470362202">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

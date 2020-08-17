@@ -1,5 +1,6 @@
 package com.iwangzhe.wzadvlibrary;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.iwangzhe.wzadvlibrary.control.WzAdvControlApp;
@@ -50,8 +51,8 @@ public class WzAdvApplication {
 
     }
 
-    public void createAdv(Context context, String pageKey, String posKey, AdvView view) {
-        WzAdvControlApp.getInstance().createAdv(context, pageKey, posKey, view);
+    public void createAdv(Activity activity, String pageKey, String posKey, AdvView view) {
+        WzAdvControlApp.getInstance().createAdv(activity, pageKey, posKey, view);
     }
 
     public boolean foundAdv(String pageKey, String posKey) {

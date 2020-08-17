@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android_custom="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_wzad_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="120dp"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/iv_wzad"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_bottom"
+        android:scaleType="centerCrop" />
+
+    <com.iwangzhe.wzadvlibrary.view.WzAdvCountDownView
+        android:id="@+id/cpb_wzcountdown"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:visibility="gone"
+        android_custom:defaultText="跳过"
+        android_custom:textColor="#ffffff"
+        android_custom:textSize="12sp" />
+</RelativeLayout>

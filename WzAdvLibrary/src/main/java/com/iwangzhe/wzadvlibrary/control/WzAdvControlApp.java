@@ -1,7 +1,9 @@
 package com.iwangzhe.wzadvlibrary.control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -16,11 +18,13 @@ import com.iwangzhe.wzadvlibrary.model.CommonRes;
 import com.iwangzhe.wzadvlibrary.model.JAdvInfo;
 import com.iwangzhe.wzadvlibrary.model.WzAdvModelApi;
 import com.iwangzhe.wzadvlibrary.serv.IResParseCallback;
+import com.iwangzhe.wzadvlibrary.serv.OnWzAdvStartPagerListener;
 import com.iwangzhe.wzadvlibrary.serv.OnWzAdvViewPagerListener;
 import com.iwangzhe.wzadvlibrary.serv.WzAdvServApi;
 import com.iwangzhe.wzadvlibrary.tool.CornerTransform;
 import com.iwangzhe.wzadvlibrary.tool.WzAdvTool;
 import com.iwangzhe.wzadvlibrary.view.AdvView;
+import com.iwangzhe.wzadvlibrary.view.WzAdvStartPager;
 import com.iwangzhe.wzadvlibrary.view.WzAdvViewPager;
 import com.iwangzhe.wzcorelibrary.IResCallback;
 
@@ -59,9 +63,9 @@ public class WzAdvControlApp {
      * @param pageKey
      * @param posKey
      */
-    public void createAdv(final Context context, final String pageKey, final String posKey, final AdvView view) {
+    public void createAdv(final Activity activity, final String pageKey, final String posKey, final AdvView view) {
         //1、查看缓存中是否有，有则显示
-        displayAdvView(context, pageKey, posKey, view);
+        displayAdvView(activity, pageKey, posKey, view);
         //2、网络请求，拿到数据刷新页面
         WzAdvServApi.getInstance().getAdverts(JAdvInfo.class, pageKey, posKey, new IResParseCallback<JAdvInfo>() {
             @Override
@@ -75,7 +79,7 @@ public class WzAdvControlApp {
                     view.post(new Runnable() {
                         @Override
                         public void run() {
-                            displayAdvView(context, pageKey, posKey, view);
+                            displayAdvView(activity, pageKey, posKey, view);
                         }
                     });
                 }
@@ -113,9 +117,9 @@ public class WzAdvControlApp {
         }
     }
 
-    private void displayAdvView(Context context, String pageKey, String posKey, AdvView view) {
+    private void displayAdvView(Activity activity, String pageKey, String posKey, AdvView view) {
         if (foundAdv(pageKey, posKey)) {
-            AdvView adView = getView(pageKey, posKey, context);
+            AdvView adView = getView(pageKey, posKey, activity);
             view.setVisibility(View.VISIBLE);
             view.removeAllViews();
             view.addView(adView);
@@ -124,8 +128,7 @@ public class WzAdvControlApp {
         }
     }
 
-
-    private AdvView getView(String pageKey, String posKey, Context context) {
+    private AdvView getView(String pageKey, String posKey, Activity activity) {
         boolean foundAdv = foundAdv(pageKey, posKey);
         if (!foundAdv) {
             return null;
@@ -133,20 +136,64 @@ public class WzAdvControlApp {
         JAdvInfo jAdvInfo = WzAdvModelApi.getInstance().getAdvInfoMap().get(pageKey + posKey);
         int advType = jAdvInfo.getPositionInfo().getAdvType();
         if (advType == 4) {
-            return getWzAdvViewPager(context, jAdvInfo);
+            return getWzAdvViewPager(activity, jAdvInfo);
         } else if (advType == 6) {//开屏广告
-            return getWzAdvLaunchView(context, jAdvInfo);
+            return getWzStartPagerView(activity, jAdvInfo);
         }
         return null;
     }
 
-    private AdvView getWzAdvLaunchView(Context context, JAdvInfo jAdvInfo) {
+    private AdvView getWzStartPagerView(Activity activity, JAdvInfo jAdvInfo) {
+        WzAdvStartPager startPager = new WzAdvStartPager(activity);
+        ArrayList<AdvertplanList> planList = jAdvInfo.getPlanList();
+        if (planList.size() > 0) {
+            JSONObject jsonObject = WzAdvTool.getInstance().getJSONObject(planList.get(0).getPics());
+            String jumpUrl = planList.get(0).getJumpUrl();
+            final String title = planList.get(0).getTitle();
+            int mapId = planList.get(0).getMapId();
+            String imageUrl = jsonObject.getString("img_1142x2208");
+            if (WzAdvTool.getInstance().isNormalWindow(activity)) {
+                String url = jsonObject.getString("img_1080x1600");
+                if (!TextUtils.isEmpty(url)) {
+                    imageUrl = url;
+                }
+            }
+            startPager.setData(jumpUrl, imageUrl, title, mapId, new OnWzAdvStartPagerListener() {
+                @Override
+                public void onCountDownViewClick() {
+                    jumpToMain();
+                }
+
+                @Override
+                public void onCountDownViewFinish() {
+                    jumpToMain();
+                }
+
+                @Override
+                public void onItemClick(String url, String titile) {
+                    startWebview(url, title);
+                }
+
+                @Override
+                public void onItemShow(int mapId) {
+                    reportAdvDisplay(new ArrayList<Integer>(), mapId, 0, 1);
+                }
+            });
+        }
         return null;
     }
 
+    private void startWebview(String url, String title) {
+        WzAdvApplication.getInstance().getmRouter().startWebview(url, title, false);
+    }
+
+    private void jumpToMain() {
+        WzAdvApplication.getInstance().getmRouter().jumpToMain("", "", false);
+    }
+
     @NonNull
-    private WzAdvViewPager getWzAdvViewPager(Context context, JAdvInfo jAdvInfo) {
-        WzAdvViewPager slideShowView = new WzAdvViewPager(context);
+    private WzAdvViewPager getWzAdvViewPager(Activity activity, JAdvInfo jAdvInfo) {
+        WzAdvViewPager slideShowView = new WzAdvViewPager(activity);
         final List<Integer> reportList = new ArrayList<>();
         ArrayList<AdvertplanList> planList = jAdvInfo.getPlanList();
         if (planList.size() > 0) {
@@ -164,7 +211,7 @@ public class WzAdvControlApp {
             slideShowView.bindData(jumpUrlList, imageUrlList, imageMapIdList, new OnWzAdvViewPagerListener() {
                 @Override
                 public void onItemClick(int position, String imgUrl, String url, String resourEntryName) {
-                    WzAdvApplication.getInstance().getmRouter().startWebview(url, "", false);
+                    startWebview(url, "");
                 }
 
                 @Override
