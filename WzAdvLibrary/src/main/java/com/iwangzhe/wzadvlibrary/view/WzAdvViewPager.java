@@ -113,9 +113,9 @@ public class WzAdvViewPager extends AdvView {
                         listener.onItemSelected(imageMapIdList.get(position), position, imageViews.length);
                         // 遍历数组让当前选中图片下的小圆点设置颜色
                         for (int i = 0; i < imageViews.length; i++) {
-                            imageViews[position].setBackgroundResource(R.drawable.vp_select);
+                            imageViews[position].setBackgroundResource(R.drawable.vp_wzad_selected);
                             if (position != i) {
-                                imageViews[i].setBackgroundResource(R.drawable.vp_select_none);
+                                imageViews[i].setBackgroundResource(R.drawable.vp_wzad_unselected);
                             }
                         }
                     }
@@ -155,10 +155,10 @@ public class WzAdvViewPager extends AdvView {
             imageViews[i] = imageView;
             if (i == 0) {
                 // 默认选中第一张图片
-                imageViews[i].setBackgroundResource(R.drawable.vp_select);
+                imageViews[i].setBackgroundResource(R.drawable.vp_wzad_selected);
             } else {
                 // 其他图片都设置未选中状态
-                imageViews[i].setBackgroundResource(R.drawable.vp_select_none);
+                imageViews[i].setBackgroundResource(R.drawable.vp_wzad_unselected);
             }
             ll_point_group.addView(imageViews[i], margin);
             ll_point_group.setGravity(Gravity.CENTER_HORIZONTAL);
