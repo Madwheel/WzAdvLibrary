@@ -5,7 +5,10 @@ import com.iwangzhe.wzadvlibrary.WzAdvApplication;
 import com.iwangzhe.wzadvlibrary.model.CommonRes;
 import com.iwangzhe.wzadvlibrary.model.JAdvInfo;
 import com.iwangzhe.wzadvlibrary.model.JBase;
-import com.iwangzhe.wzcorelibrary.IResCallback;
+import com.iwangzhe.wzcorelibrary.IIoKvdb;
+import com.iwangzhe.wzcorelibrary.INetHttp;
+import com.iwangzhe.wzcorelibrary.IRouter;
+import com.iwangzhe.wzcorelibrary.WzNetCallback;
 import com.snappydb.SnappydbException;
 
 import java.util.HashMap;
@@ -29,11 +32,37 @@ public class WzAdvServApi {
         return mWzAdvServApi;
     }
 
+    public String getModName() {
+        return "WzAdvServApi";
+    }
+
+    private INetHttp mNetHttp;
+    private IIoKvdb mIoKvdb;
+    private IRouter mRouter;
+
+    public void init(INetHttp netHttp, IIoKvdb ioKvdb, IRouter router) {
+        this.mNetHttp = netHttp;
+        this.mIoKvdb = ioKvdb;
+        this.mRouter = router;
+    }
+
+    public INetHttp getmNetHttp() {
+        return mNetHttp;
+    }
+
+    public IIoKvdb getmIoKvdb() {
+        return mIoKvdb;
+    }
+
+    public IRouter getmRouter() {
+        return mRouter;
+    }
+
     public <T extends JBase> void getAdverts(final Class<T> clazz, String pageKey, String posKey, final IResParseCallback<T> callback) {
         Map<String, String> params = new HashMap<>();
         params.put("pageKey", pageKey);
         params.put("posKey", posKey);
-        WzAdvApplication.getInstance().getmNetHttp().reqGetResByWzApi("adv/position/fetch/", params, new IResCallback() {
+        mNetHttp.reqGetResByWzApi("adv/position/fetch/", params, new WzNetCallback() {
             @Override
             public void onResult(String result) {
                 CommonRes<T> cRes;
@@ -54,12 +83,12 @@ public class WzAdvServApi {
         });
     }
 
-    public void reportAdvDisplay(int mapId, int pos, int total, final IResCallback callback) {
+    public void reportAdvDisplay(int mapId, int pos, int total, final WzNetCallback callback) {
         Map<String, String> params = new HashMap<>();
         params.put("mapId", "" + mapId);
         params.put("pos", "" + pos);
         params.put("total", "" + total);
-        WzAdvApplication.getInstance().getmNetHttp().reqGetResByWzApi("adv/position/show/", params, new IResCallback() {
+        mNetHttp.reqGetResByWzApi("adv/position/show/", params, new WzNetCallback() {
             @Override
             public void onResult(String result) {
                 callback.onResult(result);
@@ -70,7 +99,7 @@ public class WzAdvServApi {
     public CommonRes<JAdvInfo> getJAdvInfoFromDb(String key) {
         JAdvInfo jAdvInfo;
         try {
-            jAdvInfo = WzAdvApplication.getInstance().getmIoKvdb().getObject(WzAdvApplication.getInstance().getModName() + ":" + key, JAdvInfo.class);
+            jAdvInfo = mIoKvdb.getObject(getModName() + ":" + key, JAdvInfo.class);
         } catch (SnappydbException e) {
             return new CommonRes<>(false);
         }
@@ -82,7 +111,7 @@ public class WzAdvServApi {
 
     public CommonRes<JAdvInfo> setAdvInfoToDb(String key, JAdvInfo item) {
         try {
-            WzAdvApplication.getInstance().getmIoKvdb().put(WzAdvApplication.getInstance().getModName() + ":" + key, item);
+            mIoKvdb.put(getModName() + ":" + key, item);
         } catch (SnappydbException e) {
             return new CommonRes<>(false);
         }

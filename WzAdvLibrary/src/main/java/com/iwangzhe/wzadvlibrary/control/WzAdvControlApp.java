@@ -12,11 +12,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.iwangzhe.wzadvlibrary.WzAdvApplication;
 import com.iwangzhe.wzadvlibrary.model.AdvertplanList;
 import com.iwangzhe.wzadvlibrary.model.CommonRes;
 import com.iwangzhe.wzadvlibrary.model.JAdvInfo;
 import com.iwangzhe.wzadvlibrary.model.WzAdvModelApi;
+import com.iwangzhe.wzadvlibrary.serv.ILoadAdvListener;
 import com.iwangzhe.wzadvlibrary.serv.IResParseCallback;
 import com.iwangzhe.wzadvlibrary.serv.OnWzAdvStartPagerListener;
 import com.iwangzhe.wzadvlibrary.serv.OnWzAdvViewPagerListener;
@@ -26,7 +26,7 @@ import com.iwangzhe.wzadvlibrary.tool.WzAdvTool;
 import com.iwangzhe.wzadvlibrary.view.AdvView;
 import com.iwangzhe.wzadvlibrary.view.WzAdvStartPager;
 import com.iwangzhe.wzadvlibrary.view.WzAdvViewPager;
-import com.iwangzhe.wzcorelibrary.IResCallback;
+import com.iwangzhe.wzcorelibrary.WzNetCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,10 +63,32 @@ public class WzAdvControlApp {
      * @param pageKey
      * @param posKey
      */
-    public void createAdv(final Activity activity, final String pageKey, final String posKey, final AdvView view) {
+    public void createAdv(final Activity activity, final String pageKey, final String posKey, final AdvView view, final Map<Object, Object> option) {
         //1、查看缓存中是否有，有则显示
         displayAdvView(activity, pageKey, posKey, view);
         //2、网络请求，拿到数据刷新页面
+        loadAdv(pageKey, posKey, option, new ILoadAdvListener() {
+            @Override
+            public void onFinish() {
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayAdvView(activity, pageKey, posKey, view);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * 网络请求
+     *
+     * @param pageKey
+     * @param posKey
+     * @param option
+     * @param listener
+     */
+    public void loadAdv(final String pageKey, final String posKey, final Map<Object, Object> option, final ILoadAdvListener listener) {
         WzAdvServApi.getInstance().getAdverts(JAdvInfo.class, pageKey, posKey, new IResParseCallback<JAdvInfo>() {
             @Override
             public void onFinish(CommonRes<JAdvInfo> res) {
@@ -75,13 +97,15 @@ public class WzAdvControlApp {
                     Map<String, JAdvInfo> advInfoMap = WzAdvModelApi.getInstance().getAdvInfoMap();
                     advInfoMap.put(pageKey + posKey, resObj);
                     WzAdvModelApi.getInstance().setAdvInfoMap(advInfoMap);
-                    WzAdvServApi.getInstance().setAdvInfoToDb(pageKey + posKey, resObj);
-                    view.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            displayAdvView(activity, pageKey, posKey, view);
+                    if (option != null && option.size() > 0 && option.containsKey("isCacheToDb")) {
+                        boolean isCacheToDb = (boolean) option.get("isCacheToDb");
+                        if (isCacheToDb) {
+                            WzAdvServApi.getInstance().setAdvInfoToDb(pageKey + posKey, resObj);
                         }
-                    });
+                    }
+                    if (listener != null) {
+                        listener.onFinish();
+                    }
                 }
             }
         });
@@ -94,7 +118,7 @@ public class WzAdvControlApp {
      * @param posKey
      * @return
      */
-    public boolean foundAdv(String pageKey, String posKey) {
+    public boolean isAdvExist(String pageKey, String posKey) {
         CommonRes<JAdvInfo> jAdvInfoFromDb = WzAdvServApi.getInstance().getJAdvInfoFromDb(pageKey + posKey);
         if (jAdvInfoFromDb.isOk()) {
             JAdvInfo resObj = jAdvInfoFromDb.getResObj();
@@ -121,7 +145,7 @@ public class WzAdvControlApp {
         if (view == null) {
             return;
         }
-        if (foundAdv(pageKey, posKey)) {
+        if (isAdvExist(pageKey, posKey)) {
             AdvView adView = getView(pageKey, posKey, activity);
             view.setVisibility(View.VISIBLE);
             view.removeAllViews();
@@ -132,7 +156,7 @@ public class WzAdvControlApp {
     }
 
     private AdvView getView(String pageKey, String posKey, Activity activity) {
-        boolean foundAdv = foundAdv(pageKey, posKey);
+        boolean foundAdv = isAdvExist(pageKey, posKey);
         if (!foundAdv) {
             return null;
         }
@@ -187,11 +211,11 @@ public class WzAdvControlApp {
     }
 
     private void startWebview(String url, String title) {
-        WzAdvApplication.getInstance().getmRouter().startWebview(url, title, false);
+        WzAdvServApi.getInstance().getmRouter().startWebview(url, title, false);
     }
 
     private void jumpToMain() {
-        WzAdvApplication.getInstance().getmRouter().jumpToMain("", "", false);
+        WzAdvServApi.getInstance().getmRouter().jumpToMain("", "", false);
     }
 
     @NonNull
@@ -253,7 +277,7 @@ public class WzAdvControlApp {
             }
         }
         reportMap.put(key, System.currentTimeMillis());
-        WzAdvServApi.getInstance().reportAdvDisplay(mapId, position, total, new IResCallback() {
+        WzAdvServApi.getInstance().reportAdvDisplay(mapId, position, total, new WzNetCallback() {
             @Override
             public void onResult(String result) {
 
