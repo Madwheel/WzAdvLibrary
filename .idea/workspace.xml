@@ -426,24 +426,6 @@
     <configuration>C:\Users\Android\AppData\Roaming\Subversion</configuration>
     <supportedVersion>125</supportedVersion>
   </component>
-  <component name="SvnFileUrlMappingImpl">
-    <option name="myMappingRoots">
-      <list>
-        <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="E:\work\android\dk\code\trunk\Douk" />
-          <option name="myCopyRoot" value="E:\work\android\dk\code\trunk\Douk" />
-        </SvnCopyRootSimple>
-      </list>
-    </option>
-    <option name="myMoreRealMappingRoots">
-      <list>
-        <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="E:\work\android\dk\code\trunk\Douk" />
-          <option name="myCopyRoot" value="E:\work\android\dk\code\trunk\Douk" />
-        </SvnCopyRootSimple>
-      </list>
-    </option>
-  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="dc02f73c-cb24-4dd4-b12e-a8274051181b" name="Default" comment="" />

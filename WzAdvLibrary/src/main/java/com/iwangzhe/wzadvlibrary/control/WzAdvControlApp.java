@@ -118,6 +118,9 @@ public class WzAdvControlApp {
     }
 
     private void displayAdvView(Activity activity, String pageKey, String posKey, AdvView view) {
+        if (view == null) {
+            return;
+        }
         if (foundAdv(pageKey, posKey)) {
             AdvView adView = getView(pageKey, posKey, activity);
             view.setVisibility(View.VISIBLE);

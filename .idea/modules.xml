@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/WzAdvLibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/WzAdvLibrary.iml" group="WzAdvLibrary" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/WzAdvLibrary/WzAdvLibrary-WzAdvLibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/WzAdvLibrary/WzAdvLibrary-WzAdvLibrary.iml" group="WzAdvLibrary/WzAdvLibrary" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Douk/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/my-WzAdvLibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/my-WzAdvLibrary.iml" group="WzAdvLibrary" />
     </modules>
   </component>
 </project>
