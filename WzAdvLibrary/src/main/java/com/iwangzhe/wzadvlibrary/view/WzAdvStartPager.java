@@ -3,6 +3,7 @@ package com.iwangzhe.wzadvlibrary.view;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,6 +52,7 @@ public class WzAdvStartPager extends AdvView {
         this.mUrl = url;
         this.mListener = listener;
         this.mTitle = title;
+        Log.e("IIIIII", "" + imageUrl);
         RequestOptions options = new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(mContext)
                 .load(imageUrl)
@@ -86,7 +88,7 @@ public class WzAdvStartPager extends AdvView {
                 }
             }
         });
-        rl_wzad_item.setOnClickListener(new View.OnClickListener() {
+        iv_wzad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(mUrl)) {

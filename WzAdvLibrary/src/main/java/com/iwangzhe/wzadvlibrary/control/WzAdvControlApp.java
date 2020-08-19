@@ -147,6 +147,9 @@ public class WzAdvControlApp {
         }
         if (isAdvExist(pageKey, posKey)) {
             AdvView adView = getView(pageKey, posKey, activity);
+            if (adView == null) {
+                return;
+            }
             view.setVisibility(View.VISIBLE);
             view.removeAllViews();
             view.addView(adView);
@@ -164,13 +167,13 @@ public class WzAdvControlApp {
         int advType = jAdvInfo.getPositionInfo().getAdvType();
         if (advType == 4) {
             return getWzAdvViewPager(activity, jAdvInfo);
-        } else if (advType == 6) {//开屏广告
+        } else if (advType == 2) {//开屏广告
             return getWzStartPagerView(activity, jAdvInfo);
         }
         return null;
     }
 
-    private AdvView getWzStartPagerView(Activity activity, JAdvInfo jAdvInfo) {
+    private AdvView getWzStartPagerView(final Activity activity, JAdvInfo jAdvInfo) {
         WzAdvStartPager startPager = new WzAdvStartPager(activity);
         ArrayList<AdvertplanList> planList = jAdvInfo.getPlanList();
         if (planList.size() > 0) {
@@ -178,7 +181,7 @@ public class WzAdvControlApp {
             String jumpUrl = planList.get(0).getJumpUrl();
             final String title = planList.get(0).getTitle();
             int mapId = planList.get(0).getMapId();
-            String imageUrl = jsonObject.getString("img_1142x2208");
+            String imageUrl = jsonObject.getString("img_1242x2208");
             if (WzAdvTool.getInstance().isNormalWindow(activity)) {
                 String url = jsonObject.getString("img_1080x1600");
                 if (!TextUtils.isEmpty(url)) {
@@ -189,16 +192,19 @@ public class WzAdvControlApp {
                 @Override
                 public void onCountDownViewClick() {
                     jumpToMain();
+                    activity.finish();
                 }
 
                 @Override
                 public void onCountDownViewFinish() {
                     jumpToMain();
+                    activity.finish();
                 }
 
                 @Override
                 public void onItemClick(String url, String titile) {
-                    startWebview(url, title);
+                    startWebview(url, true, title);
+                    activity.finish();
                 }
 
                 @Override
@@ -207,15 +213,15 @@ public class WzAdvControlApp {
                 }
             });
         }
-        return null;
+        return startPager;
     }
 
-    private void startWebview(String url, String title) {
-        WzAdvServApi.getInstance().getmRouter().startWebview(url, title, false);
+    private void startWebview(String url, boolean isAdv, String title) {
+        WzAdvServApi.getInstance().getmRouter().startWebview(url, title, isAdv, false);
     }
 
     private void jumpToMain() {
-        WzAdvServApi.getInstance().getmRouter().jumpToMain("", "", false);
+        WzAdvServApi.getInstance().getmRouter().jumpToMain(null, "", false);
     }
 
     @NonNull
@@ -238,7 +244,7 @@ public class WzAdvControlApp {
             slideShowView.bindData(jumpUrlList, imageUrlList, imageMapIdList, new OnWzAdvViewPagerListener() {
                 @Override
                 public void onItemClick(int position, String imgUrl, String url, String resourEntryName) {
-                    startWebview(url, "");
+                    startWebview(url, false, "");
                 }
 
                 @Override
