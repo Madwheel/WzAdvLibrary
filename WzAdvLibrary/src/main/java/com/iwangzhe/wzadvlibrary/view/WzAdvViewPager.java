@@ -39,6 +39,7 @@ public class WzAdvViewPager extends AdvView {
     private List<String> mImageUrlList;
     private List<String> mRedirectUrlList;
     private ImageView[] imageViews;
+    private OnWzAdvViewPagerListener mListener;
 
     public WzAdvViewPager(Context context) {
         this(context, null);
@@ -58,6 +59,7 @@ public class WzAdvViewPager extends AdvView {
     }
 
     public void bindData(List<String> jumpUrlList, List<String> imageUrlList, final List<Integer> imageMapIdList, final OnWzAdvViewPagerListener listener) {
+        this.mListener=listener;
         mImageUrlList = new ArrayList<>();
         if (imageUrlList.size() > 0) {
             rl_group.setVisibility(View.VISIBLE);
@@ -72,8 +74,8 @@ public class WzAdvViewPager extends AdvView {
                 banner.setImageLoader(new ImageLoader() {
                     @Override
                     public void displayImage(Context context, Object path, ImageView imageView) {
-                        if (listener != null) {
-                            listener.displayImage(context, path, imageView);
+                        if (mListener != null) {
+                            mListener.displayImage(context, path, imageView);
                         }
                     }
                 });
@@ -98,8 +100,8 @@ public class WzAdvViewPager extends AdvView {
                 banner.setOnBannerListener(new OnBannerListener() {
                     @Override
                     public void OnBannerClick(int position) {
-                        if (listener != null) {
-                            listener.onItemClick(position, mImageUrlList.get(position), mRedirectUrlList.get(position), banner.getResources().getResourceEntryName(banner.getId()));
+                        if (mListener != null) {
+                            mListener.onItemClick(position, mImageUrlList.get(position), mRedirectUrlList.get(position), banner.getResources().getResourceEntryName(banner.getId()));
                         }
                     }
                 });
@@ -110,7 +112,7 @@ public class WzAdvViewPager extends AdvView {
 
                     @Override
                     public void onPageSelected(int position) {
-                        listener.onItemSelected(imageMapIdList.get(position), position, imageViews.length);
+                        mListener.onItemSelected(imageMapIdList.get(position), position, imageViews.length);
                         // 遍历数组让当前选中图片下的小圆点设置颜色
                         for (int i = 0; i < imageViews.length; i++) {
                             imageViews[position].setBackgroundResource(R.drawable.vp_wzad_selected);
@@ -165,7 +167,10 @@ public class WzAdvViewPager extends AdvView {
         }
     }
 
-    public void pause() {
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mListener=null;
         banner.stopAutoPlay();
         this.removeAllViews();
     }
