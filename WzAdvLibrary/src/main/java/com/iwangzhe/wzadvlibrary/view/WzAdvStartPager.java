@@ -29,6 +29,7 @@ public class WzAdvStartPager extends AdvView {
     private OnWzAdvStartPagerListener mListener;
     private String mUrl;
     private String mTitle;
+    private boolean isItemClicked = false;
 
     public WzAdvStartPager(Context context) {
         this(context, null);
@@ -67,7 +68,7 @@ public class WzAdvStartPager extends AdvView {
         cpb_wzcountdown.setOnCountDownFinishListener(new WzAdvCountDownView.OnCountDownFinishListener() {
             @Override
             public void countDownFinished() {
-                if (mListener != null) {
+                if (mListener != null && !isItemClicked) {
                     mListener.onCountDownViewFinish();
                 }
             }
@@ -93,6 +94,7 @@ public class WzAdvStartPager extends AdvView {
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(mUrl)) {
                     if (mListener != null) {
+                        isItemClicked = true;
                         mListener.onItemClick(mUrl, mTitle);
                     }
                 }
