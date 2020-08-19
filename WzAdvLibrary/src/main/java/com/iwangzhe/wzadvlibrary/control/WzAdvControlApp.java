@@ -224,8 +224,8 @@ public class WzAdvControlApp {
         return startPager;
     }
 
-    private void startWebview(String url, boolean isStartAdv, String title) {
-        WzAdvServApi.getInstance().getmRouter().startWebview(url, title, isStartAdv, false);
+    private void startWebview(String url, boolean isEndToHome, String title) {
+        WzAdvServApi.getInstance().getmRouter().startWebview(url, title, isEndToHome, false);
     }
 
     private void jumpToMain() {
