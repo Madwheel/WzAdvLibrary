@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -105,6 +106,13 @@ public class WzAdvControlApp {
                     }
                     if (listener != null) {
                         listener.onFinish();
+                    }
+                } else {
+                    if (option != null && option.size() > 0 && option.containsKey("isCacheToDb")) {
+                        boolean isCacheToDb = (boolean) option.get("isCacheToDb");
+                        if (isCacheToDb) {
+                            WzAdvServApi.getInstance().setAdvInfoToDb(pageKey + posKey, new JAdvInfo());
+                        }
                     }
                 }
             }
@@ -216,8 +224,8 @@ public class WzAdvControlApp {
         return startPager;
     }
 
-    private void startWebview(String url, boolean isAdv, String title) {
-        WzAdvServApi.getInstance().getmRouter().startWebview(url, title, isAdv, false);
+    private void startWebview(String url, boolean isStartAdv, String title) {
+        WzAdvServApi.getInstance().getmRouter().startWebview(url, title, isStartAdv, false);
     }
 
     private void jumpToMain() {

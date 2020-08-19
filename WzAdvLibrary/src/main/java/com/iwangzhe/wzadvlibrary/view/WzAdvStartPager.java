@@ -53,7 +53,6 @@ public class WzAdvStartPager extends AdvView {
         this.mUrl = url;
         this.mListener = listener;
         this.mTitle = title;
-        Log.e("IIIIII", "" + imageUrl);
         RequestOptions options = new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(mContext)
                 .load(imageUrl)
@@ -102,4 +101,10 @@ public class WzAdvStartPager extends AdvView {
         });
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        isItemClicked = true;
+        mListener = null;
+    }
 }
