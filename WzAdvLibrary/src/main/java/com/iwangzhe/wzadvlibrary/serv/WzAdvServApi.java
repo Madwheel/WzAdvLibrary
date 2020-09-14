@@ -2,13 +2,13 @@ package com.iwangzhe.wzadvlibrary.serv;
 
 import com.alibaba.fastjson.JSON;
 import com.iwangzhe.wzadvlibrary.WzAdvApplication;
-import com.iwangzhe.wzadvlibrary.model.CommonRes;
 import com.iwangzhe.wzadvlibrary.model.JAdvInfo;
-import com.iwangzhe.wzadvlibrary.model.JBase;
 import com.iwangzhe.wzcorelibrary.IIoKvdb;
 import com.iwangzhe.wzcorelibrary.INetHttp;
-import com.iwangzhe.wzcorelibrary.IRouter;
 import com.iwangzhe.wzcorelibrary.WzNetCallback;
+import com.iwangzhe.wzcorelibrary.base.CommonRes;
+import com.iwangzhe.wzcorelibrary.base.JBase;
+import com.iwangzhe.wzcorelibrary.base.api.ServApi;
 import com.snappydb.SnappydbException;
 
 import java.util.HashMap;
@@ -20,13 +20,19 @@ import java.util.Map;
  * date   : 2020/8/1513:38
  * desc   :
  */
-public class WzAdvServApi {
+public class WzAdvServApi extends ServApi {
     private static WzAdvServApi mWzAdvServApi = null;
+    private WzAdvApplication mMain;
 
-    public static WzAdvServApi getInstance() {
+    protected WzAdvServApi(WzAdvApplication main) {
+        super(main);
+        mMain = main;
+    }
+
+    public static WzAdvServApi getInstance(WzAdvApplication main) {
         synchronized (WzAdvServApi.class) {
             if (mWzAdvServApi == null) {
-                mWzAdvServApi = new WzAdvServApi();
+                mWzAdvServApi = new WzAdvServApi(main);
             }
         }
         return mWzAdvServApi;
@@ -38,12 +44,11 @@ public class WzAdvServApi {
 
     private INetHttp mNetHttp;
     private IIoKvdb mIoKvdb;
-    private IRouter mRouter;
 
-    public void init(INetHttp netHttp, IIoKvdb ioKvdb, IRouter router) {
+    public void init(INetHttp netHttp, IIoKvdb ioKvdb) {
         this.mNetHttp = netHttp;
         this.mIoKvdb = ioKvdb;
-        this.mRouter = router;
+
     }
 
     public INetHttp getmNetHttp() {
@@ -54,9 +59,6 @@ public class WzAdvServApi {
         return mIoKvdb;
     }
 
-    public IRouter getmRouter() {
-        return mRouter;
-    }
 
     public <T extends JBase> void getAdverts(final Class<T> clazz, String pageKey, String posKey, final IResParseCallback<T> callback) {
         Map<String, String> params = new HashMap<>();

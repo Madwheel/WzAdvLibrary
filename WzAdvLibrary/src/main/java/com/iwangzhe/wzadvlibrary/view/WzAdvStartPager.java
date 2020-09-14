@@ -27,6 +27,7 @@ public class WzAdvStartPager extends AdvView {
     private ImageView iv_wzad;
     private WzAdvCountDownView cpb_wzcountdown;
     private OnWzAdvStartPagerListener mListener;
+    private OnWzAdvStartPagerListener mCurrentListener;
     private String mUrl;
     private String mTitle;
     private boolean isItemClicked = false;
@@ -51,7 +52,7 @@ public class WzAdvStartPager extends AdvView {
 
     public void setData(String url, String imageUrl, String title, int mapId, OnWzAdvStartPagerListener listener) {
         this.mUrl = url;
-        this.mListener = listener;
+        this.mCurrentListener = this.mListener = listener;
         this.mTitle = title;
         RequestOptions options = new RequestOptions().dontAnimate().diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(mContext)
@@ -67,13 +68,13 @@ public class WzAdvStartPager extends AdvView {
         cpb_wzcountdown.setOnCountDownFinishListener(new WzAdvCountDownView.OnCountDownFinishListener() {
             @Override
             public void countDownFinished() {
-                if (mListener != null && !isItemClicked) {
-                    mListener.onCountDownViewFinish();
+                if (mCurrentListener != null && !isItemClicked) {
+                    mCurrentListener.onCountDownViewFinish();
                 }
             }
         });
-        if (mListener != null) {
-            mListener.onItemShow(mapId);
+        if (mCurrentListener != null) {
+            mCurrentListener.onItemShow(mapId);
         }
         initEvent();
     }
@@ -83,8 +84,8 @@ public class WzAdvStartPager extends AdvView {
         cpb_wzcountdown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mListener != null) {
-                    mListener.onCountDownViewClick();
+                if (mCurrentListener != null) {
+                    mCurrentListener.onCountDownViewClick();
                 }
             }
         });
@@ -92,9 +93,9 @@ public class WzAdvStartPager extends AdvView {
             @Override
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(mUrl)) {
-                    if (mListener != null) {
+                    if (mCurrentListener != null) {
                         isItemClicked = true;
-                        mListener.onItemClick(mUrl, mTitle);
+                        mCurrentListener.onItemClick(mUrl, mTitle);
                     }
                 }
             }
@@ -105,6 +106,15 @@ public class WzAdvStartPager extends AdvView {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         isItemClicked = true;
-        mListener = null;
+        mCurrentListener = null;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (mCurrentListener == null && mListener != null) {
+            mCurrentListener = mListener;
+            isItemClicked = false;
+        }
     }
 }

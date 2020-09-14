@@ -4,19 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-
 
 import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.iwangzhe.wzadvlibrary.WzAdvApplication;
 import com.iwangzhe.wzadvlibrary.model.AdvertplanList;
-import com.iwangzhe.wzadvlibrary.model.CommonRes;
 import com.iwangzhe.wzadvlibrary.model.JAdvInfo;
-import com.iwangzhe.wzadvlibrary.model.WzAdvModelApi;
 import com.iwangzhe.wzadvlibrary.serv.ILoadAdvListener;
 import com.iwangzhe.wzadvlibrary.serv.IResParseCallback;
 import com.iwangzhe.wzadvlibrary.serv.OnWzAdvStartPagerListener;
@@ -27,7 +24,10 @@ import com.iwangzhe.wzadvlibrary.tool.WzAdvTool;
 import com.iwangzhe.wzadvlibrary.view.AdvView;
 import com.iwangzhe.wzadvlibrary.view.WzAdvStartPager;
 import com.iwangzhe.wzadvlibrary.view.WzAdvViewPager;
+import com.iwangzhe.wzcorelibrary.IRouter;
 import com.iwangzhe.wzcorelibrary.WzNetCallback;
+import com.iwangzhe.wzcorelibrary.base.CommonRes;
+import com.iwangzhe.wzcorelibrary.base.app.ControlApp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,22 +40,30 @@ import java.util.Map;
  * date   : 2020/8/1513:38
  * desc   :
  */
-public class WzAdvControlApp {
+public class WzAdvControlApp extends ControlApp {
     private static WzAdvControlApp mWzAdvControlApp = null;
+    private WzAdvApplication mMain;
 
-    public static WzAdvControlApp getInstance() {
+    private WzAdvControlApp(WzAdvApplication main) {
+        super(main);
+        mMain = main;
+        reportMap = new HashMap<>();
+    }
+
+    public static WzAdvControlApp getInstance(WzAdvApplication main) {
         synchronized (WzAdvControlApp.class) {
             if (mWzAdvControlApp == null) {
-                mWzAdvControlApp = new WzAdvControlApp();
+                mWzAdvControlApp = new WzAdvControlApp(main);
             }
         }
         return mWzAdvControlApp;
     }
 
+    private IRouter mRouter;
     private Map<String, Long> reportMap;
 
-    public WzAdvControlApp() {
-        reportMap = new HashMap<>();
+    public void init(IRouter router) {
+        this.mRouter = router;
     }
 
     /**
@@ -65,20 +73,28 @@ public class WzAdvControlApp {
      * @param posKey
      */
     public void createAdv(final Activity activity, final String pageKey, final String posKey, final AdvView view, final Map<Object, Object> option) {
+        boolean isJustUseCache = false;
+        if (option != null && option.containsKey("isJustUseCache")) {
+            isJustUseCache = (boolean) option.get("isJustUseCache");
+        }
         //1、查看缓存中是否有，有则显示
-        displayAdvView(activity, pageKey, posKey, view);
-        //2、网络请求，拿到数据刷新页面
-        loadAdv(pageKey, posKey, option, new ILoadAdvListener() {
-            @Override
-            public void onFinish() {
-                view.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        displayAdvView(activity, pageKey, posKey, view);
-                    }
-                });
-            }
-        });
+        displayAdvView(activity, pageKey, posKey, view, option);
+        if (isJustUseCache) {
+            loadAdv(pageKey, posKey, option, null);
+        } else {
+            //2、网络请求，拿到数据刷新页面
+            loadAdv(pageKey, posKey, option, new ILoadAdvListener() {
+                @Override
+                public void onFinish() {
+                    view.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            displayAdvView(activity, pageKey, posKey, view, option);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     /**
@@ -90,30 +106,27 @@ public class WzAdvControlApp {
      * @param listener
      */
     public void loadAdv(final String pageKey, final String posKey, final Map<Object, Object> option, final ILoadAdvListener listener) {
-        WzAdvServApi.getInstance().getAdverts(JAdvInfo.class, pageKey, posKey, new IResParseCallback<JAdvInfo>() {
+        mMain.mServApi.getAdverts(JAdvInfo.class, pageKey, posKey, new IResParseCallback<JAdvInfo>() {
             @Override
             public void onFinish(CommonRes<JAdvInfo> res) {
+                Map<String, JAdvInfo> advInfoMap = mMain.mModelApi.getAdvInfoMap();
+                JAdvInfo resObj = new JAdvInfo();
                 if (res.isOk()) {
-                    JAdvInfo resObj = res.getResObj();
-                    Map<String, JAdvInfo> advInfoMap = WzAdvModelApi.getInstance().getAdvInfoMap();
+                    resObj = res.getResObj();
                     advInfoMap.put(pageKey + posKey, resObj);
-                    WzAdvModelApi.getInstance().setAdvInfoMap(advInfoMap);
-                    if (option != null && option.size() > 0 && option.containsKey("isCacheToDb")) {
-                        boolean isCacheToDb = (boolean) option.get("isCacheToDb");
-                        if (isCacheToDb) {
-                            WzAdvServApi.getInstance().setAdvInfoToDb(pageKey + posKey, resObj);
-                        }
-                    }
-                    if (listener != null) {
-                        listener.onFinish();
-                    }
+
                 } else {
-                    if (option != null && option.size() > 0 && option.containsKey("isCacheToDb")) {
-                        boolean isCacheToDb = (boolean) option.get("isCacheToDb");
-                        if (isCacheToDb) {
-                            WzAdvServApi.getInstance().setAdvInfoToDb(pageKey + posKey, new JAdvInfo());
-                        }
+                    advInfoMap.put(pageKey + posKey, new JAdvInfo());
+                }
+                if (option != null && option.size() > 0 && option.containsKey("isCacheToDb")) {
+                    boolean isCacheToDb = (boolean) option.get("isCacheToDb");
+                    if (isCacheToDb) {
+                        mMain.mServApi.setAdvInfoToDb(pageKey + posKey, resObj);
                     }
+                }
+                mMain.mModelApi.setAdvInfoMap(advInfoMap);
+                if (listener != null) {
+                    listener.onFinish();
                 }
             }
         });
@@ -127,17 +140,17 @@ public class WzAdvControlApp {
      * @return
      */
     public boolean isAdvExist(String pageKey, String posKey) {
-        CommonRes<JAdvInfo> jAdvInfoFromDb = WzAdvServApi.getInstance().getJAdvInfoFromDb(pageKey + posKey);
+        CommonRes<JAdvInfo> jAdvInfoFromDb = mMain.mServApi.getJAdvInfoFromDb(pageKey + posKey);
         if (jAdvInfoFromDb.isOk()) {
             JAdvInfo resObj = jAdvInfoFromDb.getResObj();
             if (resObj != null && resObj.getPlanList().size() > 0) {
-                Map<String, JAdvInfo> advInfoMap = WzAdvModelApi.getInstance().getAdvInfoMap();
+                Map<String, JAdvInfo> advInfoMap = mMain.mModelApi.getAdvInfoMap();
                 advInfoMap.put(pageKey + posKey, resObj);
-                WzAdvModelApi.getInstance().setAdvInfoMap(advInfoMap);
+                mMain.mModelApi.setAdvInfoMap(advInfoMap);
                 return true;
             }
         }
-        Map<String, JAdvInfo> advInfoMap = WzAdvModelApi.getInstance().getAdvInfoMap();
+        Map<String, JAdvInfo> advInfoMap = mMain.mModelApi.getAdvInfoMap();
         if (advInfoMap == null && advInfoMap.size() == 0) {
             return false;
         }
@@ -149,13 +162,14 @@ public class WzAdvControlApp {
         }
     }
 
-    private void displayAdvView(Activity activity, String pageKey, String posKey, AdvView view) {
+    private void displayAdvView(Activity activity, String pageKey, String posKey, AdvView view, Map<Object, Object> option) {
         if (view == null) {
             return;
         }
         if (isAdvExist(pageKey, posKey)) {
-            AdvView adView = getView(pageKey, posKey, activity);
+            AdvView adView = getView(pageKey, posKey, activity, option);
             if (adView == null) {
+                view.setVisibility(View.GONE);
                 return;
             }
             view.setVisibility(View.VISIBLE);
@@ -166,22 +180,22 @@ public class WzAdvControlApp {
         }
     }
 
-    private AdvView getView(String pageKey, String posKey, Activity activity) {
+    private AdvView getView(String pageKey, String posKey, Activity activity, Map<Object, Object> option) {
         boolean foundAdv = isAdvExist(pageKey, posKey);
         if (!foundAdv) {
             return null;
         }
-        JAdvInfo jAdvInfo = WzAdvModelApi.getInstance().getAdvInfoMap().get(pageKey + posKey);
+        JAdvInfo jAdvInfo = mMain.mModelApi.getAdvInfoMap().get(pageKey + posKey);
         int advType = jAdvInfo.getPositionInfo().getAdvType();
         if (advType == 4) {
-            return getWzAdvViewPager(activity, jAdvInfo);
+            return getWzAdvViewPager(activity, jAdvInfo, option);
         } else if (advType == 2) {//开屏广告
-            return getWzStartPagerView(activity, jAdvInfo);
+            return getWzStartPagerView(activity, jAdvInfo, option);
         }
         return null;
     }
 
-    private AdvView getWzStartPagerView(final Activity activity, JAdvInfo jAdvInfo) {
+    private AdvView getWzStartPagerView(final Activity activity, JAdvInfo jAdvInfo, Map<Object, Object> option) {
         WzAdvStartPager startPager = new WzAdvStartPager(activity);
         ArrayList<AdvertplanList> planList = jAdvInfo.getPlanList();
         if (planList.size() > 0) {
@@ -225,48 +239,72 @@ public class WzAdvControlApp {
     }
 
     private void startWebview(String url, boolean isEndToHome, String title) {
-        WzAdvServApi.getInstance().getmRouter().startWebview(url, title, isEndToHome, false);
+        mRouter.startWebview(url, title, isEndToHome, false);
     }
 
     private void jumpToMain() {
-        WzAdvServApi.getInstance().getmRouter().jumpToMain(null, "", false);
+        mRouter.jumpToMain(null, "", false);
     }
 
     @NonNull
-    private WzAdvViewPager getWzAdvViewPager(Activity activity, JAdvInfo jAdvInfo) {
+    private WzAdvViewPager getWzAdvViewPager(Activity activity, JAdvInfo jAdvInfo, Map<Object, Object> option) {
         WzAdvViewPager slideShowView = new WzAdvViewPager(activity);
         final List<Integer> reportList = new ArrayList<>();
         ArrayList<AdvertplanList> planList = jAdvInfo.getPlanList();
+        int indicatorType = 0;
+        int indicatorLocation = 0;
+        int indicatorLaoutBottom = 0;
+        boolean isShowTitle = false;
+        boolean isAutoPlay = true;
+        if (option.containsKey("indicatorType")) {
+            indicatorType = (int) option.get("indicatorType");
+        }
+        if (option.containsKey("indicatorLocation")) {
+            indicatorLocation = (int) option.get("indicatorLocation");
+        }
+        if (option.containsKey("indicatorLaoutBottom")) {
+            indicatorLaoutBottom = (int) option.get("indicatorLaoutBottom");
+        }
+        if (option.containsKey("isShowTitle")) {
+            isShowTitle = (boolean) option.get("isShowTitle");
+        }
+        if (option.containsKey("isAutoPlay")) {
+            isAutoPlay = (boolean) option.get("isAutoPlay");
+        }
         if (planList.size() > 0) {
             //添加图片到图片列表里
             List<String> imageUrlList = new ArrayList<>();
             List<Integer> imageMapIdList = new ArrayList<>();
             List<String> jumpUrlList = new ArrayList<>();
+            List<String> titleList = new ArrayList<>();
             for (int i = 0; i < planList.size(); i++) {
                 jumpUrlList.add(planList.get(i).getJumpUrl());
                 JSONObject jsonObject = WzAdvTool.getInstance().getJSONObject(planList.get(i).getPics());
                 String string = jsonObject.getString("img_" + jAdvInfo.getPositionInfo().getWidth() + "x" + jAdvInfo.getPositionInfo().getHeight());
                 imageUrlList.add(string);
                 imageMapIdList.add(planList.get(i).getMapId());
+                titleList.add(planList.get(i).getTitle());
             }
-            slideShowView.bindData(jumpUrlList, imageUrlList, imageMapIdList, new OnWzAdvViewPagerListener() {
-                @Override
-                public void onItemClick(int position, String imgUrl, String url, String resourEntryName) {
-                    startWebview(url, false, "");
-                }
+            slideShowView.bindData(jumpUrlList, imageUrlList, imageMapIdList, titleList, indicatorType, indicatorLocation
+                    , indicatorLaoutBottom, isShowTitle, isAutoPlay, new OnWzAdvViewPagerListener() {
+                        @Override
+                        public void onItemClick(int position, String imgUrl, String url, String resourEntryName) {
+                            startWebview(url, false, "");
+                        }
 
-                @Override
-                public void displayImage(Context context, Object path, ImageView imageView) {
-                    loadImage(context, path, imageView);
-                }
+                        @Override
+                        public void displayImage(Context context, Object path, ImageView imageView) {
+                            loadImage(context, path, imageView);
+                        }
 
-                @Override
-                public void onItemSelected(int mapId, int position, int total) {
-                    reportAdvDisplay(reportList, mapId, position, total);
-                }
-            });
+                        @Override
+                        public void onItemSelected(int mapId, int position, int total) {
+                            reportAdvDisplay(reportList, mapId, position, total);
+                        }
+                    });
         } else {
-            slideShowView.bindData(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<Integer>(), null);
+            slideShowView.bindData(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<Integer>(), new ArrayList<String>(),
+                    indicatorType, indicatorLocation, indicatorLaoutBottom, isShowTitle, isAutoPlay, null);
         }
         return slideShowView;
     }
@@ -291,7 +329,7 @@ public class WzAdvControlApp {
             }
         }
         reportMap.put(key, System.currentTimeMillis());
-        WzAdvServApi.getInstance().reportAdvDisplay(mapId, position, total, new WzNetCallback() {
+        mMain.mServApi.reportAdvDisplay(mapId, position, total, new WzNetCallback() {
             @Override
             public void onResult(String result) {
 

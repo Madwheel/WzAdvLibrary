@@ -1,5 +1,7 @@
 package com.iwangzhe.wzadvlibrary.model;
 
+import com.iwangzhe.wzcorelibrary.base.JBase;
+
 import java.util.ArrayList;
 
 /**
@@ -8,7 +10,7 @@ import java.util.ArrayList;
  * date   : 2020/8/1513:43
  * desc   :
  */
-public class JAdvInfo extends JBase{
+public class JAdvInfo extends JBase {
     private PositionInfo positionInfo;
     private ArrayList<AdvertplanList> planList;
 

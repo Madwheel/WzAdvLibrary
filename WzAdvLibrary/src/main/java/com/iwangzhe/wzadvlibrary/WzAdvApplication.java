@@ -10,6 +10,7 @@ import com.iwangzhe.wzadvlibrary.view.AdvView;
 import com.iwangzhe.wzcorelibrary.IIoKvdb;
 import com.iwangzhe.wzcorelibrary.INetHttp;
 import com.iwangzhe.wzcorelibrary.IRouter;
+import com.iwangzhe.wzcorelibrary.base.main.ModMain;
 
 import java.util.Map;
 
@@ -19,8 +20,11 @@ import java.util.Map;
  * date   : 2020/8/1513:29
  * desc   :
  */
-public class WzAdvApplication {
+public class WzAdvApplication extends ModMain {
     private static WzAdvApplication mWzAdvApplication = null;
+    public WzAdvControlApp mControlApp;
+    public WzAdvServApi mServApi;
+    public WzAdvModelApi mModelApi;
     private Map<Object, Object> mOption;
 
     public static WzAdvApplication getInstance() {
@@ -32,29 +36,34 @@ public class WzAdvApplication {
         return mWzAdvApplication;
     }
 
+    @Override
+    public String getModName() {
+        return "WzAdvApplication";
+    }
+
     public WzAdvApplication() {
         WzAdvTool.getInstance();
-        WzAdvModelApi.getInstance();
-        WzAdvServApi.getInstance();
-        WzAdvControlApp.getInstance();
+        mModelApi = WzAdvModelApi.getInstance(this);
+        mServApi = WzAdvServApi.getInstance(this);
+        mControlApp = WzAdvControlApp.getInstance(this);
     }
 
     public void init(INetHttp netHttp, IIoKvdb ioKvdb, IRouter router, Map<Object, Object> option) {
         this.mOption = option;
-        WzAdvServApi.getInstance().init(netHttp, ioKvdb, router);
-
+        mControlApp.init(router);
+        mServApi.init(netHttp, ioKvdb);
     }
 
     public void preLoadAdv(String pageKey, String posKey, Map<Object, Object> option) {
-        WzAdvControlApp.getInstance().loadAdv(pageKey, posKey, option, null);
+        mControlApp.loadAdv(pageKey, posKey, option, null);
     }
 
     public void createAdv(Activity activity, String pageKey, String posKey, AdvView view, Map<Object, Object> option) {
-        WzAdvControlApp.getInstance().createAdv(activity, pageKey, posKey, view, option);
+        mControlApp.createAdv(activity, pageKey, posKey, view, option);
     }
 
     public boolean isAdvExist(String pageKey, String posKey) {
-        return WzAdvControlApp.getInstance().isAdvExist(pageKey, posKey);
+        return mControlApp.isAdvExist(pageKey, posKey);
     }
 
     public Map<Object, Object> getmOption() {

@@ -1,5 +1,8 @@
 package com.iwangzhe.wzadvlibrary.model;
 
+import com.iwangzhe.wzadvlibrary.WzAdvApplication;
+import com.iwangzhe.wzcorelibrary.base.api.ModelApi;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,14 +12,14 @@ import java.util.Map;
  * date   : 2020/8/1513:52
  * desc   :
  */
-public class WzAdvModelApi {
+public class WzAdvModelApi extends ModelApi {
     private static WzAdvModelApi mWzAdvModelApi = null;
 
 
-    public static WzAdvModelApi getInstance() {
+    public static WzAdvModelApi getInstance(WzAdvApplication main) {
         synchronized (WzAdvModelApi.class) {
             if (mWzAdvModelApi == null) {
-                mWzAdvModelApi = new WzAdvModelApi();
+                mWzAdvModelApi = new WzAdvModelApi(main);
             }
         }
         return mWzAdvModelApi;
@@ -25,7 +28,8 @@ public class WzAdvModelApi {
     private Map<String, JAdvInfo> advInfoMap;
     private SplashAdInfo splashAdInfo;
 
-    public WzAdvModelApi() {
+    private WzAdvModelApi(WzAdvApplication main) {
+        super(main);
         advInfoMap = new HashMap<>();
         splashAdInfo = new SplashAdInfo();
     }

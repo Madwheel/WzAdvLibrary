@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 import com.iwangzhe.wzadvlibrary.R;
@@ -34,18 +35,25 @@ import java.util.List;
 public class WzAdvViewPager extends AdvView {
     private Context mContext;
     private RelativeLayout rl_group;
+    private RelativeLayout rl_indicator_group;
     private Banner banner;
     private LinearLayout ll_point_group;
+    private LinearLayout ll_point;
+    private RelativeLayout rl_indicator;
+    private TextView tv_title;
     private List<String> mImageUrlList;
     private List<String> mRedirectUrlList;
     private ImageView[] imageViews;
     private OnWzAdvViewPagerListener mListener;
+    private OnWzAdvViewPagerListener mCurrentListener;
+    private int indicator_selected;
+    private int indicator_unselected;
 
     public WzAdvViewPager(Context context) {
         this(context, null);
     }
 
-    public WzAdvViewPager(Context context, @Nullable AttributeSet attrs) {
+    public WzAdvViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
         LayoutInflater.from(context).inflate(R.layout.viewpager_wzadv, this);
@@ -54,28 +62,49 @@ public class WzAdvViewPager extends AdvView {
 
     private void initView() {
         rl_group = findViewById(R.id.rl_slideshow);
+        rl_indicator_group = findViewById(R.id.rl_indicator_group);
         banner = findViewById(R.id.banner);
         ll_point_group = findViewById(R.id.ll_point_group);
+        ll_point = findViewById(R.id.ll_point);
+        rl_indicator = findViewById(R.id.rl_indicator);
+        tv_title = findViewById(R.id.tv_title);
     }
 
-    public void bindData(List<String> jumpUrlList, List<String> imageUrlList, final List<Integer> imageMapIdList, final OnWzAdvViewPagerListener listener) {
-        this.mListener=listener;
+    public void bindData(List<String> jumpUrlList, List<String> imageUrlList, final List<Integer> imageMapIdList
+            , final List<String> titleList, int indicatorType, int indicatorLocation, int indicatorLaoutBottom
+            , final boolean isShowTitle, boolean isAutoPlay, final OnWzAdvViewPagerListener listener) {
+        this.mCurrentListener = this.mListener = listener;
+        rl_indicator.setGravity(indicatorLocation);
         mImageUrlList = new ArrayList<>();
+        LinearLayout pointGroup = ll_point_group;
         if (imageUrlList.size() > 0) {
             rl_group.setVisibility(View.VISIBLE);
+            if (indicatorType == 0) {
+                rl_indicator_group.setVisibility(GONE);
+                ll_point.setVisibility(VISIBLE);
+                pointGroup = ll_point;
+                indicator_selected = R.drawable.indicator_wzad_rectangle_selected;
+                indicator_unselected = R.drawable.indicator_wzad_rectangle_unselected;
+            } else {
+                pointGroup = ll_point_group;
+                rl_indicator_group.setVisibility(VISIBLE);
+                ll_point.setVisibility(GONE);
+                indicator_selected = R.drawable.indicator_wzad_oval_selected;
+                indicator_unselected = R.drawable.indicator_wzad_oval_unselected;
+            }
             //添加图片到图片列表里
             mRedirectUrlList = jumpUrlList;
             if (!WzAdvTool.getInstance().compareList(mImageUrlList, imageUrlList)) {
                 mImageUrlList.clear();
                 mImageUrlList = imageUrlList;
                 //添加轮播点
-                loadPoint(mImageUrlList, ll_point_group);
+                loadPoint(mImageUrlList, pointGroup, indicatorType, indicatorLaoutBottom);
                 //设置图片加载器
                 banner.setImageLoader(new ImageLoader() {
                     @Override
                     public void displayImage(Context context, Object path, ImageView imageView) {
-                        if (mListener != null) {
-                            mListener.displayImage(context, path, imageView);
+                        if (mCurrentListener != null) {
+                            mCurrentListener.displayImage(context, path, imageView);
                         }
                     }
                 });
@@ -88,10 +117,14 @@ public class WzAdvViewPager extends AdvView {
                     banner.setBannerStyle(BannerConfig.NOT_INDICATOR);
                     //设置图片集合
                     banner.setIndicatorGravity(BannerConfig.CENTER);
-                    banner.isAutoPlay(true);
-                    //设置轮播时间
-                    banner.setDelayTime(3000);
-                    banner.startAutoPlay();
+                    if (isAutoPlay) {
+                        banner.isAutoPlay(true);
+                        //设置轮播时间
+                        banner.setDelayTime(3000);
+                        banner.startAutoPlay();
+                    } else {
+                        banner.isAutoPlay(false);
+                    }
                 } else {
                     //设置banner样式
                     banner.setBannerStyle(BannerConfig.NOT_INDICATOR);
@@ -100,8 +133,8 @@ public class WzAdvViewPager extends AdvView {
                 banner.setOnBannerListener(new OnBannerListener() {
                     @Override
                     public void OnBannerClick(int position) {
-                        if (mListener != null) {
-                            mListener.onItemClick(position, mImageUrlList.get(position), mRedirectUrlList.get(position), banner.getResources().getResourceEntryName(banner.getId()));
+                        if (mCurrentListener != null) {
+                            mCurrentListener.onItemClick(position, mImageUrlList.get(position), mRedirectUrlList.get(position), banner.getResources().getResourceEntryName(banner.getId()));
                         }
                     }
                 });
@@ -112,12 +145,19 @@ public class WzAdvViewPager extends AdvView {
 
                     @Override
                     public void onPageSelected(int position) {
-                        mListener.onItemSelected(imageMapIdList.get(position), position, imageViews.length);
+                        mCurrentListener.onItemSelected(imageMapIdList.get(position), position, imageViews.length);
                         // 遍历数组让当前选中图片下的小圆点设置颜色
                         for (int i = 0; i < imageViews.length; i++) {
-                            imageViews[position].setBackgroundResource(R.drawable.vp_wzad_selected);
+                            imageViews[position].setBackgroundResource(indicator_selected);
+                            if (isShowTitle) {
+                                tv_title.setVisibility(VISIBLE);
+                                String text = titleList.get(position);
+                                tv_title.setText(text);
+                            } else {
+                                tv_title.setVisibility(GONE);
+                            }
                             if (position != i) {
-                                imageViews[i].setBackgroundResource(R.drawable.vp_wzad_unselected);
+                                imageViews[i].setBackgroundResource(indicator_unselected);
                             }
                         }
                     }
@@ -136,42 +176,58 @@ public class WzAdvViewPager extends AdvView {
     /**
      * 初始化小点，有几张图片下面就显示几个小圆点
      */
-    private void loadPoint(List<String> headerImages, LinearLayout ll_point_group) {
+    private void loadPoint(List<String> headerImages, LinearLayout pointGroup, int indicatorType, int indicatorLaoutBottom) {
         if (headerImages.size() == 1) {
-            ll_point_group.setVisibility(View.GONE);
+            pointGroup.setVisibility(View.GONE);
         } else {
-            ll_point_group.setVisibility(View.VISIBLE);
+            pointGroup.setVisibility(View.VISIBLE);
         }
         imageViews = new ImageView[headerImages.size()];
-        ll_point_group.removeAllViews();
+        pointGroup.removeAllViews();
         LinearLayout.LayoutParams margin = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         // 设置每个小圆点距离左边的间距
+        if (indicatorLaoutBottom == 0) {
+            indicatorLaoutBottom = 3;
+        }
         margin.setMargins(WzAdvTool.getInstance().dip2px(mContext, 4)
-                , WzAdvTool.getInstance().dip2px(mContext, 3)
-                , WzAdvTool.getInstance().dip2px(mContext, 4), 0);
+                , WzAdvTool.getInstance().dip2px(mContext, indicatorLaoutBottom)
+                , WzAdvTool.getInstance().dip2px(mContext, 4)
+                , WzAdvTool.getInstance().dip2px(mContext, indicatorLaoutBottom));
         for (int i = 0; i < headerImages.size(); i++) {
             ImageView imageView = new ImageView(mContext);
             // 设置每个小圆点的宽高
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(12, 3));
+            if (indicatorType == 0) {
+                imageView.setLayoutParams(new ViewGroup.LayoutParams(12, 3));
+            } else {
+                imageView.setLayoutParams(new ViewGroup.LayoutParams(6, 6));
+            }
             imageViews[i] = imageView;
             if (i == 0) {
                 // 默认选中第一张图片
-                imageViews[i].setBackgroundResource(R.drawable.vp_wzad_selected);
+                imageViews[i].setBackgroundResource(indicator_selected);
             } else {
                 // 其他图片都设置未选中状态
-                imageViews[i].setBackgroundResource(R.drawable.vp_wzad_unselected);
+                imageViews[i].setBackgroundResource(indicator_unselected);
             }
-            ll_point_group.addView(imageViews[i], margin);
-            ll_point_group.setGravity(Gravity.CENTER_HORIZONTAL);
+            pointGroup.addView(imageViews[i], margin);
+            pointGroup.setGravity(Gravity.CENTER_HORIZONTAL);
         }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mListener=null;
+        mCurrentListener = null;
         banner.stopAutoPlay();
-        this.removeAllViews();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (mCurrentListener == null && mListener != null) {
+            mCurrentListener = mListener;
+            banner.start();
+        }
     }
 }
