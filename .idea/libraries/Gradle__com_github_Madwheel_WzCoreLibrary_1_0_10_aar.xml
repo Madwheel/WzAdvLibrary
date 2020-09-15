@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.Madwheel:WzCoreLibrary:1.0.10@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/WzCoreLibrary-1.0.10.aar/cb8655b37ad120452e08744620780884/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/WzCoreLibrary-1.0.10.aar/cb8655b37ad120452e08744620780884/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/WzCoreLibrary-1.0.10.aar/cb8655b37ad120452e08744620780884/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.Madwheel/WzCoreLibrary/1.0.10/5daa2cff7e47225525b88659ec57ded0af25342b/WzCoreLibrary-1.0.10-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

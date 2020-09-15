@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: com.snappydb:snappydb-lib:0.5.2@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/snappydb-lib-0.5.2.aar/6e0786ca1fead26eb770028f0aed1a1a/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/snappydb-lib-0.5.2.aar/6e0786ca1fead26eb770028f0aed1a1a/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/snappydb-lib-0.5.2.aar/6e0786ca1fead26eb770028f0aed1a1a/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/snappydb-lib-0.5.2.aar/cea9fd8b2f9efd2a3d00c83d0163d91f/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/snappydb-lib-0.5.2.aar/cea9fd8b2f9efd2a3d00c83d0163d91f/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/snappydb-lib-0.5.2.aar/cea9fd8b2f9efd2a3d00c83d0163d91f/res" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.snappydb/snappydb-lib/0.5.2/4986530aad71449df0ed3f301465917f5265e6b2/snappydb-lib-0.5.2-javadoc.jar!/" />
