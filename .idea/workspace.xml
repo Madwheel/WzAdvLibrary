@@ -284,6 +284,7 @@
   <component name="PropertiesComponent">
     <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="8&amp;38a51375&amp;0&amp;0001" />
     <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-07-29T02:48:28.979Z" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="android.sdk.path" value="D:/develop/Android/Sdk" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="Groovy JUnit" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.Groovy JUnit" value="groovy.util.GroovyTestCase" />
