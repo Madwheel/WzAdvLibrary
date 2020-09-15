@@ -52,7 +52,7 @@ public class WzAdvCountDownView extends View {
         textColor = type.getColor(R.styleable.WzAdvCountDownView_textColor, Color.WHITE);
         textSize = type.getDimensionPixelSize(R.styleable.WzAdvCountDownView_textSize, 15);
         roundColor = type.getColor(R.styleable.WzAdvCountDownView_roundColor, Color.RED);
-        roundWidth = type.getFloat(R.styleable.WzAdvCountDownView_roundWidth, 6f);
+        roundWidth = type.getFloat(R.styleable.WzAdvCountDownView_wzRoundWidth, 6f);
         roundProgressColor = type.getColor(R.styleable.WzAdvCountDownView_roundProgressColor, Color.WHITE);
         roundStyle = type.getInt(R.styleable.WzAdvCountDownView_roundStyle, 0);
         type.recycle();
