@@ -254,6 +254,7 @@ public class WzAdvControlApp extends ControlApp {
         int indicatorType = 0;
         int indicatorLocation = 0;
         int indicatorLaoutBottom = 0;
+        int roundCorner = 0;
         boolean isShowTitle = false;
         boolean isAutoPlay = true;
         if (option.containsKey("indicatorType")) {
@@ -271,6 +272,9 @@ public class WzAdvControlApp extends ControlApp {
         if (option.containsKey("isAutoPlay")) {
             isAutoPlay = (boolean) option.get("isAutoPlay");
         }
+        if (option.containsKey("roundCorner")) {
+            roundCorner = (int) option.get("roundCorner");
+        }
         if (planList.size() > 0) {
             //添加图片到图片列表里
             List<String> imageUrlList = new ArrayList<>();
@@ -285,6 +289,7 @@ public class WzAdvControlApp extends ControlApp {
                 imageMapIdList.add(planList.get(i).getMapId());
                 titleList.add(planList.get(i).getTitle());
             }
+            final int finalRoundCorner = roundCorner;
             slideShowView.bindData(jumpUrlList, imageUrlList, imageMapIdList, titleList, indicatorType, indicatorLocation
                     , indicatorLaoutBottom, isShowTitle, isAutoPlay, new OnWzAdvViewPagerListener() {
                         @Override
@@ -294,7 +299,7 @@ public class WzAdvControlApp extends ControlApp {
 
                         @Override
                         public void displayImage(Context context, Object path, ImageView imageView) {
-                            loadImage(context, path, imageView);
+                            loadImage(context, path, imageView, finalRoundCorner);
                         }
 
                         @Override
@@ -337,13 +342,22 @@ public class WzAdvControlApp extends ControlApp {
         });
     }
 
-    private void loadImage(Context context, Object path, ImageView imageView) {
-        CornerTransform transformation = new CornerTransform(context, WzAdvTool.getInstance().dip2px(context, 5));
-        transformation.setExceptCorner(false, false, false, false);
-        Glide.with(context)
-                .asBitmap()
-                .load(path)
-                .apply(RequestOptions.bitmapTransform(transformation).diskCacheStrategy(DiskCacheStrategy.ALL))
-                .into(imageView);
+    private void loadImage(Context context, Object path, ImageView imageView, int roundCorner) {
+        if (roundCorner != 0) {
+            CornerTransform transformation = new CornerTransform(context, WzAdvTool.getInstance().dip2px(context, 5));
+            transformation.setExceptCorner(false, false, false, false);
+            Glide.with(context)
+                    .asBitmap()
+                    .load(path)
+                    .apply(RequestOptions.bitmapTransform(transformation).diskCacheStrategy(DiskCacheStrategy.ALL))
+                    .into(imageView);
+        } else {
+            RequestOptions requestOptions = new RequestOptions();
+            Glide.with(context)
+                    .asBitmap()
+                    .load(path)
+                    .apply(requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL))
+                    .into(imageView);
+        }
     }
 }
