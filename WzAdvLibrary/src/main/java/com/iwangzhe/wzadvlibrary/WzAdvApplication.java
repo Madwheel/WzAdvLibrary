@@ -41,7 +41,7 @@ public class WzAdvApplication extends ModMain {
         return "WzAdvApplication";
     }
 
-    public WzAdvApplication() {
+    private WzAdvApplication() {
         WzAdvTool.getInstance();
         mModelApi = WzAdvModelApi.getInstance(this);
         mServApi = WzAdvServApi.getInstance(this);
