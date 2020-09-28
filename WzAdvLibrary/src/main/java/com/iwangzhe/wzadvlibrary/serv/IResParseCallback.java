@@ -1,6 +1,7 @@
 package com.iwangzhe.wzadvlibrary.serv;
 
-import com.iwangzhe.wzcorelibrary.base.CommonRes;
+
+import com.iwz.WzFramwork.base.CommonRes;
 
 /**
  * author : 亚辉

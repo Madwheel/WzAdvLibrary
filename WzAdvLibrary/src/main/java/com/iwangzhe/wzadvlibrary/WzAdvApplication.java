@@ -10,7 +10,7 @@ import com.iwangzhe.wzadvlibrary.view.AdvView;
 import com.iwangzhe.wzcorelibrary.IIoKvdb;
 import com.iwangzhe.wzcorelibrary.INetHttp;
 import com.iwangzhe.wzcorelibrary.IRouter;
-import com.iwangzhe.wzcorelibrary.base.main.ModMain;
+import com.iwz.WzFramwork.base.main.ModMain;
 
 import java.util.Map;
 

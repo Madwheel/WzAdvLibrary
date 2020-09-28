@@ -1,6 +1,7 @@
 package com.iwangzhe.wzadvlibrary.model;
 
-import com.iwangzhe.wzcorelibrary.base.JBase;
+
+import com.iwz.WzFramwork.base.JBase;
 
 import java.util.ArrayList;
 

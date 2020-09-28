@@ -18,7 +18,6 @@ import com.iwangzhe.wzadvlibrary.serv.ILoadAdvListener;
 import com.iwangzhe.wzadvlibrary.serv.IResParseCallback;
 import com.iwangzhe.wzadvlibrary.serv.OnWzAdvStartPagerListener;
 import com.iwangzhe.wzadvlibrary.serv.OnWzAdvViewPagerListener;
-import com.iwangzhe.wzadvlibrary.serv.WzAdvServApi;
 import com.iwangzhe.wzadvlibrary.tool.CornerTransform;
 import com.iwangzhe.wzadvlibrary.tool.WzAdvTool;
 import com.iwangzhe.wzadvlibrary.view.AdvView;
@@ -26,8 +25,8 @@ import com.iwangzhe.wzadvlibrary.view.WzAdvStartPager;
 import com.iwangzhe.wzadvlibrary.view.WzAdvViewPager;
 import com.iwangzhe.wzcorelibrary.IRouter;
 import com.iwangzhe.wzcorelibrary.WzNetCallback;
-import com.iwangzhe.wzcorelibrary.base.CommonRes;
-import com.iwangzhe.wzcorelibrary.base.app.ControlApp;
+import com.iwz.WzFramwork.base.CommonRes;
+import com.iwz.WzFramwork.base.app.ControlApp;
 
 import java.util.ArrayList;
 import java.util.HashMap;

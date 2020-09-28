@@ -1,7 +1,7 @@
 package com.iwangzhe.wzadvlibrary.model;
 
 import com.iwangzhe.wzadvlibrary.WzAdvApplication;
-import com.iwangzhe.wzcorelibrary.base.api.ModelApi;
+import com.iwz.WzFramwork.base.api.ModelApi;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,8 +1,5 @@
 package com.iwangzhe.wzadvlibrary.serv;
 
-import android.content.Context;
-import android.widget.ImageView;
-
 /**
  * author : 亚辉
  * e-mail : 2372680617@qq.com

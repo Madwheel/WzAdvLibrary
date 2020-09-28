@@ -10,7 +10,6 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
 
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Transformation;

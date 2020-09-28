@@ -6,9 +6,9 @@ import com.iwangzhe.wzadvlibrary.model.JAdvInfo;
 import com.iwangzhe.wzcorelibrary.IIoKvdb;
 import com.iwangzhe.wzcorelibrary.INetHttp;
 import com.iwangzhe.wzcorelibrary.WzNetCallback;
-import com.iwangzhe.wzcorelibrary.base.CommonRes;
-import com.iwangzhe.wzcorelibrary.base.JBase;
-import com.iwangzhe.wzcorelibrary.base.api.ServApi;
+import com.iwz.WzFramwork.base.CommonRes;
+import com.iwz.WzFramwork.base.JBase;
+import com.iwz.WzFramwork.base.api.ServApi;
 import com.snappydb.SnappydbException;
 
 import java.util.HashMap;
